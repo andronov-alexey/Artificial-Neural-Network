@@ -2,14 +2,9 @@
 #define ANN_H
 
 #include <vector>
-using namespace std;
+#include "matrix.h"
 
-struct neuron
-{
-	neuron() : weight(1.){};
-	double weight;
-	vector<int> conn;
-};
+using namespace std;
 
 
 class ANN
@@ -20,8 +15,10 @@ public:
 	~ANN();
 private:
 	unique_ptr<FileReader> fr;
-	vector<vector<neuron>> neurons;
+	// Weights of each layer
+	vector<QSMatrix<double>> weights_m;
 	vector<double> input;
+	vector<double> desired_output;
 };
 
 #endif

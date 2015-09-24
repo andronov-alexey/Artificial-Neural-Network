@@ -77,10 +77,12 @@
     <ClCompile Include="ANN.cpp" />
     <ClCompile Include="FileReader.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="matrix.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ANN.h" />
     <ClInclude Include="FileReader.h" />
+    <ClInclude Include="matrix.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="in.txt" />
