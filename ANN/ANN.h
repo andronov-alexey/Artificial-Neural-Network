@@ -1,8 +1,9 @@
 #ifndef ANN_H
 #define ANN_H
 
-#include <vector>
 #include "matrix.h"
+#include <vector>
+#include <algorithm>
 
 using namespace std;
 
@@ -12,6 +13,7 @@ class ANN
 	friend class FileReader;
 public:
 	ANN();
+	void FeedForward();
 	~ANN();
 private:
 	unique_ptr<FileReader> fr;
@@ -19,6 +21,7 @@ private:
 	vector<QSMatrix<double>> weights_m;
 	vector<double> input;
 	vector<double> desired_output;
+	vector<vector<double>> output;
 };
 
 #endif

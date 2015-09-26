@@ -104,7 +104,7 @@ bool FileReader::ReadInput()
 	return ok_status;
 }
 
-// Getting rid of comments
+
 template <typename T>
 void FileReader::GetNextVal(T& res)
 {
@@ -115,6 +115,7 @@ void FileReader::GetNextVal(T& res)
 	string line;
 	while(getline(file, line)) 
 	{
+		// Getting rid of comments
 		std::size_t found = line.find("//");
 		if (found != string::npos)
 		{

@@ -121,8 +121,8 @@ QSMatrix<T> QSMatrix<T>::operator*(const QSMatrix<T>& rhs) {
 	
 	for (unsigned i = 0; i < rows; i++) {
 		for (unsigned j = 0; j < cols; j++) {
-			for (unsigned k=0; k<rows; k++) {
-				result(i,j) += this->mat[i][k] * rhs(k,j);
+			for (unsigned k = 0; k < rows; k++) {
+				result(i, j) += this->mat[i][k] * rhs(k, j);
 			}
 		}
 	}
@@ -137,6 +137,33 @@ QSMatrix<T>& QSMatrix<T>::operator*=(const QSMatrix<T>& rhs) {
 	(*this) = result;
 	return *this;
 }
+
+// vector * matrix 
+template <typename T>
+std::vector<T> operator*(const std::vector<T>& lhs, const QSMatrix<T>& rhs)
+{
+	unsigned rows = rhs.row_count();
+	unsigned cols = rhs.col_count();
+	assert(lhs.size() == rows);
+
+	vector<T> result(cols);
+
+	for (unsigned i = 0; i < cols; i++) {
+		for (unsigned j = 0; j < rows; j++) {
+			result[i] += lhs[j] * rhs(j,  i);
+		}
+	}
+
+	return result;
+}
+
+// vector * matrix 
+template <typename T>
+std::vector<T>& operator*=(std::vector<T>& lhs, const QSMatrix<T>& rhs) {
+	return (lhs = lhs * rhs);
+}
+
+
 
 // Calculate a transpose of this matrix
 template <typename T>

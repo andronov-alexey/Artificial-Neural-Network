@@ -4,8 +4,12 @@
 // src: https://github.com/mhallsmoore/quantcode/tree/master/data-structures-algorithms/matrix/
 
 #include <vector>
+#include <assert.h> 
 
-template <typename T> class QSMatrix {
+// + copy and swap?
+
+template <typename T> 
+class QSMatrix {
 private:
 	std::vector<std::vector<T>> mat;
 	unsigned rows;
@@ -13,7 +17,7 @@ private:
 
 public:
 	QSMatrix();
-	QSMatrix(unsigned _rows, unsigned _cols, const T& _initial = 0);// =0? tabs
+	QSMatrix(unsigned _rows, unsigned _cols, const T& _initial = 0);
 	QSMatrix(const QSMatrix<T>& rhs);
 	
 	// Operator overloading, for "standard" mathematical matrix operations
@@ -38,6 +42,8 @@ public:
 	std::vector<T> operator*(const std::vector<T>& rhs);
 	std::vector<T> diag_vec();
 	
+	
+
 	// Access the individual elements
 	T& operator()(const unsigned& row, const unsigned& col);
 	const T& operator()(const unsigned& row, const unsigned& col) const;
@@ -47,6 +53,14 @@ public:
 	unsigned col_count() const;
 	
 };
+
+// external intrfcs
+template <typename T>
+std::vector<T> operator*(const std::vector<T>& lhs, const QSMatrix<T>& rhs);
+template <typename T>
+std::vector<T>& operator*=(std::vector<T>& lhs, const QSMatrix<T>& rhs);
+
+
 
 #include "matrix.cpp"
 
