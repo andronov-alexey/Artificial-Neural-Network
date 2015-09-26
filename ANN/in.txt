@@ -1,15 +1,12 @@
 // Layers amount 
 3
 // Neurons per layer (in layer -> out layer)
-4 2 3
+4 2 
+3
 // initial weights (in layer -> out layer)
-1 2 
-3 4
-5 6 
-7 8 
+1 2 3 4 5 6 7 8 
 2 2 // biases
-1 1 1 
-2 2 2 
+1 1 1 2 2 2 
 1 1 1 // biases
 // Connections (in layer -> out layer, count begins from 0)
 // -1 = All interconnected

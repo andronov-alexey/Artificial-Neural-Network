@@ -1,5 +1,6 @@
 #ifndef FileReader_H
 #define FileReader_H
+
 #include <conio.h>
 #include <iostream>
 #include <fstream>
@@ -17,8 +18,11 @@ public:
 	FileReader(ANN* const);
 	bool ReadInput();
 private:
-	void GetNextLine(istringstream&);
-	ifstream f;
+	// Retrieve value from input file
+	template <typename T>
+	void GetNextVal(T&);
+	ifstream file; // input file
+	istringstream buf; // buffer
 	ANN* const ann_ptr;
 };
 
