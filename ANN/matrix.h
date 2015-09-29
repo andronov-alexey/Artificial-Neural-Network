@@ -54,7 +54,7 @@ public:
 	
 };
 
-// external intrfcs
+// external interfaces
 template <typename T>
 std::vector<T> operator*(const std::vector<T>& lhs, const QSMatrix<T>& rhs);
 template <typename T>

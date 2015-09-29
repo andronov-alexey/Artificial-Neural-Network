@@ -1,27 +1,21 @@
 #ifndef ANN_H
 #define ANN_H
 
-#include "matrix.h"
-#include <vector>
-#include <algorithm>
+#include "InputStruct.h"
 
 using namespace std;
 
 
 class ANN
 {
-	friend class FileReader;
+	// precision
+	typedef double float_t;
 public:
 	ANN();
 	void FeedForward();
-	~ANN();
 private:
-	unique_ptr<FileReader> fr;
-	// Weights of each layer
-	vector<QSMatrix<double>> weights_m;
-	vector<double> input;
-	vector<double> desired_output;
-	vector<vector<double>> output;
+	InputStruct<float_t> in;
+	vector<vector<float_t>> m;
 };
 
 #endif

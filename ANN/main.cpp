@@ -1,9 +1,9 @@
 #include "ANN.h"
-  #include "matrix.h"
-
 
 //TODO:
 // + training sets
+// + switch between activation functions
+
 int main ( int argc, char **argv)
 {
 	ANN ann;

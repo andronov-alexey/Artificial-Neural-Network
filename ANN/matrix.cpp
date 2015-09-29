@@ -283,6 +283,6 @@ unsigned QSMatrix<T>::row_count() const {
 template <typename T>
 unsigned QSMatrix<T>::col_count() const {
 	return this->cols;
-}
+};
 
 #endif
