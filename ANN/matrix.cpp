@@ -20,9 +20,24 @@ QSMatrix<T>::QSMatrix(unsigned _rows, unsigned _cols, const T& _initial) {
 	cols = _cols;
 }
 
+// Move Constructor
+template <typename T>
+QSMatrix<T>::QSMatrix(const QSMatrix<T>&& other) : mat(std::move(other.mat)) {
+	rows = other.rows;
+	cols = other.cols;
+}
+
+template <typename T>
+QSMatrix<T>& QSMatrix<T>::operator=(QSMatrix<T>&& other) {
+	mat = std::move(other.mat);
+	rows = other.rows;
+	cols = other.cols;
+	return *this;
+}
+
 // Copy Constructor
 template <typename T>
-QSMatrix<T>::QSMatrix(const QSMatrix<T>& rhs) {
+QSMatrix<T>::QSMatrix(const QSMatrix<T>& other) {
 	mat = rhs.mat;
 	rows = rhs.row_count();
 	cols = rhs.col_count();
@@ -30,7 +45,7 @@ QSMatrix<T>::QSMatrix(const QSMatrix<T>& rhs) {
 
 // Assignment Operator
 template <typename T>
-QSMatrix<T>& QSMatrix<T>::operator=(const QSMatrix<T>& rhs) {
+QSMatrix<T>& QSMatrix<T>::operator=(const QSMatrix<T>& other) {
 	if (&rhs == this)
 	  return *this;
 	
@@ -153,7 +168,6 @@ std::vector<T> operator*(const std::vector<T>& lhs, const QSMatrix<T>& rhs)
 			result[i] += lhs[j] * rhs(j,  i);
 		}
 	}
-
 	return result;
 }
 
@@ -163,6 +177,18 @@ std::vector<T>& operator*=(std::vector<T>& lhs, const QSMatrix<T>& rhs) {
 	return (lhs = lhs * rhs);
 }
 
+// matrix * vector
+template <typename T>
+std::vector<T> QSMatrix<T>::operator*(const std::vector<T>& rhs) {
+	std::vector<T> result(rhs.size(), 0.0);
+
+	for (unsigned i = 0; i < rows; i++) {
+		for (unsigned j = 0; j < cols; j++) {
+			result[i] = this->mat[i][j] * rhs[j];
+		}
+	}
+	return result;
+}
 
 template <typename Cont>
 void SubFill(Cont& dst, const Cont& src)
@@ -171,7 +197,6 @@ void SubFill(Cont& dst, const Cont& src)
 	assert(s <= dst.size());
 	copy(begin(src), end(src), begin(dst));
 }
-
 
 // Calculate a transpose of this matrix
 template <typename T>
@@ -218,43 +243,39 @@ QSMatrix<T> QSMatrix<T>::operator-(const T& rhs) {
 // Matrix/scalar multiplication
 template <typename T>
 QSMatrix<T> QSMatrix<T>::operator*(const T& rhs) {
-  QSMatrix result(rows, cols, 0.0);
+	QSMatrix result(rows, cols, 0.0);
 
-  for (unsigned i = 0; i < rows; i++) {
-	for (unsigned j = 0; j < cols; j++) {
-		result(i,j) = this->mat[i][j] * rhs;
+	for (unsigned i = 0; i < rows; i++) {
+		for (unsigned j = 0; j < cols; j++) {
+			result(i,j) = this->mat[i][j] * rhs;
+		}
 	}
-  }
+	return result;
+}
 
-  return result;
+// matrix * scalar value
+template <typename T>
+QSMatrix<T>& QSMatrix<T>::multscal(const T& val) {
+	for (unsigned i = 0; i < rows; i++) {//foreach
+		std::transform( begin(mat[i]), end(mat[i]), begin(mat[i]), std::multiplies<T>(rhs));
+		/*for (unsigned j = 0; j < cols; j++) {
+			result(i,j) = this->mat[i][j] * rhs;
+		}*/
+	}
+	return *this;
 }
 
 // Matrix/scalar division
 template <typename T>
 QSMatrix<T> QSMatrix<T>::operator/(const T& rhs) {
-  QSMatrix result(rows, cols, 0.0);
-  
-  for (unsigned i = 0; i < rows; i++) {
-	for (unsigned j = 0; j < cols; j++) {
-		result(i,j) = this->mat[i][j] / rhs;
+	QSMatrix result(rows, cols, 0.0);
+
+	for (unsigned i = 0; i < rows; i++) {
+		for (unsigned j = 0; j < cols; j++) {
+			result(i,j) = this->mat[i][j] / rhs;
+		}
 	}
-  }
-  
-  return result;
-}
-
-// Multiply a matrix with a vector
-template <typename T>
-std::vector<T> QSMatrix<T>::operator*(const std::vector<T>& rhs) {
-  std::vector<T> result(rhs.size(), 0.0);
-
-  for (unsigned i = 0; i < rows; i++) {
-	for (unsigned j = 0; j < cols; j++) {
-		result[i] = this->mat[i][j] * rhs[j];
-	}
-  }
-
-  return result;
+	return result;
 }
 
 // Obtain a vector of the diagonal elements

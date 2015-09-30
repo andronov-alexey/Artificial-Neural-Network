@@ -33,8 +33,7 @@ bool InputStruct<T>::ReadInput()
 	{
 		const auto w_r = weights[k].row_count() - 1;
 		const auto w_c = weights[k].col_count();
-		for( size_t i = 0; i < w_r; i++)
-		{
+		for( size_t i = 0; i < w_r; i++) {
 			for( size_t j = 0; j < w_c; j++) {
 				GetNextVal(float_val); 
 				weights[k](i,j) = float_val;
@@ -61,7 +60,7 @@ bool InputStruct<T>::ReadInput()
 	}
 
 	// desired output
-	desired_output.resize(weights[weights.size() - 1].col_count());
+	desired_output.resize(weights[w_s - 1].col_count());
 	for( size_t i = 0; i < desired_output.size(); i++)	{
 		GetNextVal(float_val);
 		desired_output[i] = float_val;
