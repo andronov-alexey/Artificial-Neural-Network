@@ -4,6 +4,7 @@
 // src: https://github.com/mhallsmoore/quantcode/tree/master/data-structures-algorithms/matrix/
 
 #include <vector>
+#include <algorithm>
 #include <assert.h> 
 
 // + swap?
@@ -12,12 +13,8 @@ template <typename T>
 class QSMatrix {
 private:
 	std::vector<std::vector<T>> mat;
-	unsigned rows; // get rid?
-	unsigned cols;
-
 public:
-	QSMatrix();
-	QSMatrix(unsigned _rows, unsigned _cols, const T& _initial = 0);
+	QSMatrix(size_t rows = 0, size_t cols = 0, const T& init = 0);
 	QSMatrix(const QSMatrix<T>&& other);
 	QSMatrix(const QSMatrix<T>& other);
 	
@@ -26,35 +23,32 @@ public:
 	QSMatrix<T>& operator=(QSMatrix<T>&& other); // move assignment
 
 	// Matrix mathematical operations
-	QSMatrix<T> operator+(const QSMatrix<T>& rhs);
-	QSMatrix<T>& operator+=(const QSMatrix<T>& rhs);
-	QSMatrix<T> operator-(const QSMatrix<T>& rhs);
-	QSMatrix<T>& operator-=(const QSMatrix<T>& rhs);
-	QSMatrix<T> operator*(const QSMatrix<T>& rhs);
-	QSMatrix<T>& operator*=(const QSMatrix<T>& rhs);
+	QSMatrix<T> operator+(const QSMatrix<T>& other);
+	QSMatrix<T>& operator+=(const QSMatrix<T>& other);
+	QSMatrix<T> operator-(const QSMatrix<T>& other);
+	QSMatrix<T>& operator-=(const QSMatrix<T>& other);
+	QSMatrix<T> operator*(const QSMatrix<T>& other);
+	QSMatrix<T>& operator*=(const QSMatrix<T>& other);
 	QSMatrix<T> transpose();
 	
 	// Matrix/scalar operations
-	QSMatrix<T> operator+(const T& rhs);
-	QSMatrix<T> operator-(const T& rhs);
-	QSMatrix<T> operator*(const T& rhs);
-	QSMatrix<T> operator/(const T& rhs);
+	QSMatrix<T> operator+(const T& val);
+	QSMatrix<T> operator-(const T& val);
+	QSMatrix<T> operator*(const T& val);
+	QSMatrix<T> operator/(const T& val);
 	QSMatrix<T>& multscal(const T& val);
 	
 	// Matrix/vector operations
-	std::vector<T> operator*(const std::vector<T>& rhs);
-	std::vector<T> diag_vec();
+	std::vector<T> operator*(const std::vector<T>& other);
+	std::vector<T> diag_vec() const;
 	
-	
-
 	// Access the individual elements
-	T& operator()(const unsigned& row, const unsigned& col);
-	const T& operator()(const unsigned& row, const unsigned& col) const;
+	T& operator()(const size_t& row, const size_t& col);
+	const T& operator()(const size_t& row, const size_t& col) const;
 	
-	// Access the row and column sizes
-	unsigned row_count() const;
-	unsigned col_count() const;
-	
+	// row and column sizes
+	size_t row_count() const;
+	size_t col_count() const;
 };
 
 // external interfaces
