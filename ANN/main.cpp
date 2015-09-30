@@ -3,6 +3,7 @@
 //TODO:
 // + training sets
 // + switch between activation functions
+// + steps for in.txt
 
 int main ( int argc, char **argv)
 {

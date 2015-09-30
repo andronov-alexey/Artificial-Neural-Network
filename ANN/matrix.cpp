@@ -164,6 +164,14 @@ std::vector<T>& operator*=(std::vector<T>& lhs, const QSMatrix<T>& rhs) {
 }
 
 
+template <typename Cont>
+void SubFill(Cont& dst, const Cont& src)
+{
+	const auto s = src.size(); 
+	assert(s <= dst.size());
+	copy(begin(src), end(src), begin(dst));
+}
+
 
 // Calculate a transpose of this matrix
 template <typename T>

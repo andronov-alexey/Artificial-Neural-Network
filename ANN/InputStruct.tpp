@@ -1,13 +1,10 @@
 template <typename T>
 bool InputStruct<T>::ReadInput()
 {
-	bool ok_status = true;
-
 	file.open ("in.txt");
 	if (!file.is_open()) {
 		cout << "Cannot open file \"in.txt\"";
-		ok_status = false;
-		return ok_status;
+		return false;
 	}
 
 	// start reading file
@@ -26,57 +23,36 @@ bool InputStruct<T>::ReadInput()
 	}
 
 	// initial weights (in layer -> out layer)
-	for( size_t k = 0; k < weights.size(); k++)
+	const auto w_s = weights.size();
+	if (!w_s) {
+		cout << "No weight values found in input file!" << endl;
+		return false;
+	}
+	
+	for( size_t k = 0; k < w_s; k++)
 	{
-		for( size_t i = 0; i < weights[k].row_count(); i++)
+		const auto w_r = weights[k].row_count() - 1;
+		const auto w_c = weights[k].col_count();
+		for( size_t i = 0; i < w_r; i++)
 		{
-			for( size_t j = 0; j < weights[k].col_count(); j++) {
+			for( size_t j = 0; j < w_c; j++) {
 				GetNextVal(float_val); 
 				weights[k](i,j) = float_val;
 			}
 		}
 	}
 
-	// Connections (in layer -> out layer)
-	//GetNextVal(iss); 
-	//iss >> int_val;
-	//if (int_val == -1) // All nods are interconnected
-	//{
-	//	for( size_t i = 0; i < neurons.size() - 1; i++)
-	//	{
-	//		auto && vi = neurons[i];
-	//		auto && v0 = vi[0].conn;
-	//		v0.resize(neurons[i + 1].size());
-	//		iota (begin(v0), end(v0), 0);
-	//		// copy
-	//		for_each(next(begin(vi)), end(vi), [v0](neuron& elem){elem.conn = v0;});
-	//	}
-	//}
-	//else
-	//{
-	//	iss.seekg (0, iss.beg); // set cursor to the beginning
-	//	for( size_t i = 0; i < neurons.size() - 1; i++)
-	//	{
-	//		auto && vi = neurons[i];
-	//		for( size_t j = 0; j < vi.size(); j++)
-	//		{
-	//			iss >> int_val;
-	//			vi[j].conn.resize(int_val);
-	//		}
-	//		GetNextVal(iss);
-	//		for( size_t j = 0; j < vi.size(); j++)
-	//		{
-	//			auto&& connects = vi[j].conn;
-	//			for( size_t z = 0; z < connects.size(); z++)
-	//			{
-	//				iss >> connects[z];
-	//			}
-	//		}
-	//		GetNextVal(iss);
-	//	}
-	//}
+	// biases
+	for( size_t k = 0; k < w_s; k++)
+	{
+		const auto w_r = weights[k].row_count() - 1;
+		const auto w_c = weights[k].col_count();
+		for( size_t j = 0; j < w_c; j++) {
+			GetNextVal(float_val); 
+			weights[k](w_r, j) = float_val;
+		}
+	}
 
-	//GetNextVal(iss);
 	// input signals
 	input.resize(weights[0].row_count() - 1); // - bias row
 	for( size_t i = 0; i < input.size(); i++) {
@@ -85,14 +61,14 @@ bool InputStruct<T>::ReadInput()
 	}
 
 	// desired output
-	desired_output.resize(weights[weights.size() - 1].row_count());
+	desired_output.resize(weights[weights.size() - 1].col_count());
 	for( size_t i = 0; i < desired_output.size(); i++)	{
 		GetNextVal(float_val);
 		desired_output[i] = float_val;
 	}
 
 	file.close();
-	return ok_status;
+	return true;
 }
 
 

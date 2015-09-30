@@ -40,7 +40,7 @@ void ANN::FeedForward()
 		return;
 	copy(begin(in.input), end(in.input), begin(*m.begin())); 
 	for (size_t i = 0; i < s - 1; i++) {
-		m[i + 1] = m[i] * in.weights[i]; // exitation Net(j)
+		SubFill(m[i + 1], m[i] * in.weights[i]); // exitation Net(j)
 		// + (*sign)
 	}	
 }
