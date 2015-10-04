@@ -7,24 +7,36 @@
 using namespace std;
 
 // type of activation function
-//#define classifier
+#define classifier
 
 class ANN
 {
 	// precision
 	typedef double float_t;
+	// rectangular matrix
+	typedef vector<vector<float_t>> rect_matrix;
+	typedef function<float_t(float_t&)> func_t;
 public:
 	ANN();
 	void FeedForward();
 private:
 	InputStruct<float_t> in;
-	vector<vector<float_t>> m;
+	// matrix of outputs
+	rect_matrix o;
+	// matrix of corresponding derivatives of outputs
+	rect_matrix d_o;
 	// applicable activation function
-	function<void(float_t&)> F;
+	func_t F;
+	// derivative of the activation function
+	func_t dF;
 	// activation function for hidden layer
-	function<void(float_t&)> Fh;
+	func_t Fh;
+	// derivative of the activation function for hidden layer
+	func_t dFh;
 	// activation function for output layer
-	function<void(float_t&)> Fo;
+	func_t Fo;
+	// derivative of the activation function for output layer
+	func_t dFo;
 };
 
 #endif
