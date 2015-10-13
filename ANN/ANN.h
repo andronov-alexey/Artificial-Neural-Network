@@ -3,18 +3,19 @@
 
 #include "InputStruct.h"
 #include <functional>
+#include <iterator>
 
 using namespace std;
 
 // type of activation function
-#define classifier
+#define classifier // poor choice
 
 class ANN
 {
 	// precision
 	typedef double float_t;
 	// rectangular matrix
-	typedef vector<vector<float_t>> rect_matrix;
+	typedef vector<vector<float_t>> matrix_t;
 	typedef function<float_t(float_t&)> func_t;
 public:
 	ANN();
@@ -22,9 +23,9 @@ public:
 private:
 	InputStruct<float_t> in;
 	// matrix of outputs
-	rect_matrix o;
+	matrix_t o;
 	// matrix of corresponding derivatives of outputs
-	rect_matrix d_o;
+	matrix_t d_o;
 	// applicable activation function
 	func_t F;
 	// derivative of the activation function
@@ -37,6 +38,10 @@ private:
 	func_t Fo;
 	// derivative of the activation function for output layer
 	func_t dFo;
+	// activation function for error layer
+	function<float_t(float_t&, float_t&)> Fe;
+	// derivative of the activation function for error layer
+	function<float_t(float_t&, float_t&)> dFe;
 };
 
 #endif
