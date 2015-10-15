@@ -13,15 +13,16 @@ using namespace std;
 class ANN
 {
 	// precision
-	typedef double float_t;
+	typedef double elem_t;
+	typedef vector<elem_t> layer_t;
 	// rectangular matrix
-	typedef vector<vector<float_t>> matrix_t;
-	typedef function<float_t(float_t&)> func_t;
+	typedef vector<layer_t> matrix_t;
+	typedef function<elem_t(elem_t&)> func_t;
 public:
 	ANN();
 	void FeedForward();
 private:
-	InputStruct<float_t> in;
+	InputStruct<elem_t> in;
 	// matrix of outputs
 	matrix_t o;
 	// matrix of corresponding derivatives of outputs
@@ -39,9 +40,9 @@ private:
 	// derivative of the activation function for output layer
 	func_t dFo;
 	// activation function for error layer
-	function<float_t(float_t&, float_t&)> Fe;
+	function<elem_t(elem_t&, elem_t&)> Fe;
 	// derivative of the activation function for error layer
-	function<float_t(float_t&, float_t&)> dFe;
+	function<elem_t(elem_t&, elem_t&)> dFe;
 };
 
 #endif
