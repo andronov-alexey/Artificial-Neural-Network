@@ -18,15 +18,26 @@ class ANN
 	// rectangular matrix
 	typedef vector<layer_t> matrix_t;
 	typedef function<elem_t(elem_t&)> func_t;
+	typedef function<elem_t(elem_t&, elem_t&)> func2_t;
+	
 public:
 	ANN();
 	void FeedForward();
+	void CalculateError();
 private:
 	InputStruct<elem_t> in;
 	// matrix of outputs
 	matrix_t o;
 	// matrix of corresponding derivatives of outputs
 	matrix_t d_o;
+
+	// indices
+	size_t lastLayerIndex;
+	size_t errorLayerIndex;
+
+	// errors of the network for every iteration
+	vector<elem_t> errors;
+
 	// applicable activation function
 	func_t F;
 	// derivative of the activation function
@@ -40,9 +51,9 @@ private:
 	// derivative of the activation function for output layer
 	func_t dFo;
 	// activation function for error layer
-	function<elem_t(elem_t&, elem_t&)> Fe;
+	func2_t Fe;
 	// derivative of the activation function for error layer
-	function<elem_t(elem_t&, elem_t&)> dFe;
+	func2_t dFe;
 };
 
 #endif

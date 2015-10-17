@@ -75,11 +75,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="ANN.h" />
-    <ClInclude Include="InputStruct.h" />
-    <ClInclude Include="matrix.h" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="in.txt" />
     <None Include="src\InputStruct.tpp" />
   </ItemGroup>
@@ -87,6 +82,11 @@
     <ClCompile Include="src\ANN.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\matrix.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\ANN.h" />
+    <ClInclude Include="src\InputStruct.h" />
+    <ClInclude Include="src\matrix.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />
