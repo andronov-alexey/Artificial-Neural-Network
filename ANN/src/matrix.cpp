@@ -111,7 +111,7 @@ QSMatrix<T>& QSMatrix<T>::operator-=(const QSMatrix<T>& other) {
 	return *this;
 }
 
-// Left multiplcation of this matrix and another
+// Left multiplication of this matrix and another
 template <typename T>
 QSMatrix<T> QSMatrix<T>::operator*(const QSMatrix<T>& other) {
 	const auto rows = other.row_count();
@@ -138,17 +138,18 @@ QSMatrix<T>& QSMatrix<T>::operator*=(const QSMatrix<T>& other) {
 
 // vector * matrix 
 template <typename T>
-std::vector<T> operator*(const std::vector<T>& lhs, const QSMatrix<T>& rhs)
+std::vector<T> operator*(const std::vector<T> & v, const QSMatrix<T> & m)
 {
-	const auto rows = rhs.row_count();
-	const auto cols = rhs.col_count();
-	assert(lhs.size() == rows);
+	const auto rows = m.row_count();
+	const auto cols = m.col_count();
+	const auto vsz = v.size();
+	assert(vsz <= rows);
 
 	vector<T> result(cols);
 
 	for (size_t i = 0; i < cols; i++) {
-		for (size_t j = 0; j < rows; j++) {
-			result[i] += lhs[j] * rhs(j,  i);
+		for (size_t j = 0; j < vsz; j++) {
+			result[i] += v[j] * m(j,  i);
 		}
 	}
 	return result;
@@ -163,12 +164,12 @@ std::vector<T>& operator*=(std::vector<T>& lhs, const QSMatrix<T>& rhs) {
 // matrix * vector
 template <typename T>
 std::vector<T> QSMatrix<T>::operator*(const std::vector<T>& other) {
-	std::vector<T> result(rhs.size());
 	const auto rows = row_count();
 	const auto cols = col_count();
+	std::vector<T> result(rows);
 	for (size_t i = 0; i < rows; i++) {
 		for (size_t j = 0; j < cols; j++) {
-			result[i] = this->mat[i][j] * other[j];
+			result[i] += this->mat[i][j] * other[j];
 		}
 	}
 	return result;
@@ -242,6 +243,7 @@ QSMatrix<T> QSMatrix<T>::operator*(const T& val) {
 }
 
 // matrix * scalar value
+// [duplicate of "QSMatrix<T> QSMatrix<T>::operator*(const T& val)"]
 template <typename T>
 QSMatrix<T>& QSMatrix<T>::multscal(const T& val) {
 	for(auto it = begin(mat); it != end(mat); ++it)	{

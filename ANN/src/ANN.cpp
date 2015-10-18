@@ -63,6 +63,14 @@ ANN::ANN() {
 
 	lastLayerIndex = o.size() - 2;
 	errorLayerIndex = lastLayerIndex + 1;
+
+	deltas.resize(lastLayerIndex);
+	for( size_t i = 0; i < lastLayerIndex - 1; i++)
+		deltas[i].resize(o[i + 1].size() - 1);
+	deltas[lastLayerIndex - 1].resize(o[lastLayerIndex].size());
+
+	maxError = 1e-5;
+	iteration = 0;
 }
 
 void ANN::FeedForward()
@@ -83,9 +91,10 @@ void ANN::FeedForward()
 			dF = dFo;
 		}
 		// apply function to the layer (aka s(Net(j)))
-		transform(begin(Oj), (i != lastLayerIndex - 1) ? prev(end(Oj)) : end(Oj), begin(Oj), F);
+		auto endIt = (i != lastLayerIndex - 1) ? prev(end(Oj)) : end(Oj);
+		transform(begin(Oj), endIt, begin(Oj), F);
 		// calculate derivatives
-		transform(begin(Oj), (i != lastLayerIndex - 1) ? prev(end(Oj)) : end(Oj), begin(dOj), dF);
+		transform(begin(Oj), endIt, begin(dOj), dF);
 	}
 	// process error level
 	layer_t& Olast = o[lastLayerIndex];
@@ -100,4 +109,18 @@ void ANN::FeedForward()
 void ANN::CalculateError() {
 	const layer_t& Oe = o[errorLayerIndex];
 	errors.push_back(accumulate(begin(Oe), end(Oe), static_cast<elem_t>(0)));
+}
+
+void ANN::BackPropagation()
+{
+	// backpropagated error up to the output layer
+	layer_t& dOlast = d_o[lastLayerIndex];
+	layer_t& dOe =    d_o[errorLayerIndex];
+	transform(begin(dOlast), end(dOlast), begin(dOe), begin(deltas[lastLayerIndex - 1]), multiplies<elem_t>());
+	// backpropagated error up to the hidden layer
+	for(int i = lastLayerIndex - 2; i > -1; --i) {
+		layer_t& dOprev = d_o[i + 1];
+		auto W2Delta = in.weights[i + 1] * deltas[i + 1];
+		transform(begin(dOprev), end(dOprev), begin(W2Delta), begin(deltas[i]), multiplies<elem_t>());
+	}
 }

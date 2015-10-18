@@ -24,18 +24,24 @@ public:
 	ANN();
 	void FeedForward();
 	void CalculateError();
+	void BackPropagation();
 private:
 	InputStruct<elem_t> in;
 	// matrix of outputs
 	matrix_t o;
 	// matrix of corresponding derivatives of outputs
 	matrix_t d_o;
+	// functional derivatives (deltas)
+	matrix_t deltas;
 
+	size_t iteration;
+	elem_t maxError;
 	// indices
 	size_t lastLayerIndex;
 	size_t errorLayerIndex;
 
-	// errors of the network for every iteration
+
+	// quadratic errors of the network for every iteration
 	vector<elem_t> errors;
 
 	// applicable activation function
