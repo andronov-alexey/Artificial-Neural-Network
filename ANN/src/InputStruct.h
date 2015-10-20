@@ -12,7 +12,7 @@
 template <typename T>
 class InputStruct
 {
-	// precision
+	// fixed point precision
 	typedef int fix_t;
 public:
 	bool ReadInput();

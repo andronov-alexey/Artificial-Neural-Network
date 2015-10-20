@@ -26,7 +26,11 @@ public:
 	void CalculateError();
 	void BackPropagation();
 private:
+	void InitSizes();
+	void InitFunctions();
 	InputStruct<elem_t> in;
+	// same type and dimensions as in.weights // very bad code :) 
+	std::vector<QSMatrix<elem_t>> accretion; 
 	// matrix of outputs
 	matrix_t o;
 	// matrix of corresponding derivatives of outputs
@@ -35,6 +39,8 @@ private:
 	matrix_t deltas;
 
 	size_t iteration;
+	// learning rate
+	elem_t gamma;
 	elem_t maxError;
 	// indices
 	size_t lastLayerIndex;

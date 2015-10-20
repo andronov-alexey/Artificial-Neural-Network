@@ -23,21 +23,34 @@ linear(const T& val) {
 	return val;
 }
 
-ANN::ANN() {
+ANN::ANN() : iteration(0) {
+	InitFunctions();
+	in.ReadInput();
+	InitFunctions();
+	InitSizes();
+
+	maxError = 1e-5;
+	gamma = 10;
+}
+
+
+void ANN::InitFunctions()
+{
 	Fh =  [](const elem_t& el) { return sigmoid(el); };
 	dFh = [](const elem_t& el) { return el*(1. - el); };
 	Fe =  [](const elem_t& o, const elem_t& d){ return 0.5*(o - d)*(o - d); };
 	dFe = [](const elem_t& o, const elem_t& d){ return (o - d); };
-	#ifdef classifier
+#ifdef classifier
 	Fo =  Fh;
 	dFo = dFh;
-	#else // regression
+#else // regression
 	Fo =  [](const elem_t& el) { return linear(el); };
 	dFo = [](const elem_t& el) { return 0; };
-	#endif
+#endif
+}
 
-	in.ReadInput();
-
+void ANN::InitSizes()
+{
 	const auto s = in.weights.size();
 	o.resize(s + 2); // +1 = error level, +1 = input level
 	d_o.resize(s + 2);
@@ -68,13 +81,12 @@ ANN::ANN() {
 	for( size_t i = 0; i < lastLayerIndex - 1; i++)
 		deltas[i].resize(o[i + 1].size() - 1);
 	deltas[lastLayerIndex - 1].resize(o[lastLayerIndex].size());
-
-	maxError = 1e-5;
-	iteration = 0;
+	// set same dimensions
+	accretion = in.weights;
 }
 
-void ANN::FeedForward()
-{
+
+void ANN::FeedForward() {
 	const auto s = o.size();
 	
 	F = Fh;
@@ -111,8 +123,7 @@ void ANN::CalculateError() {
 	errors.push_back(accumulate(begin(Oe), end(Oe), static_cast<elem_t>(0)));
 }
 
-void ANN::BackPropagation()
-{
+void ANN::BackPropagation() {
 	// backpropagated error up to the output layer
 	layer_t& dOlast = d_o[lastLayerIndex];
 	layer_t& dOe =    d_o[errorLayerIndex];
@@ -122,5 +133,17 @@ void ANN::BackPropagation()
 		layer_t& dOprev = d_o[i + 1];
 		auto W2Delta = in.weights[i + 1] * deltas[i + 1];
 		transform(begin(dOprev), end(dOprev), begin(W2Delta), begin(deltas[i]), multiplies<elem_t>());
+	}
+	// compute augmentation matrices
+	const size_t sz = deltas.size();
+	for (size_t i = 0; i < sz; i++) {
+		//layer_t dumbO (2, 10); dumbO[1] = 100;
+		//layer_t dumbDelta (5, 1); dumbDelta[1] = 10; dumbDelta[2] = 100; dumbDelta[3] = 1000; dumbDelta[4] = 10000;
+		//MatrixMult(accretion[0], dumbDelta, dumbO);
+		MatrixMult(accretion[i], o[i], deltas[i]);
+		// apply learning coefficient
+		accretion[i].multscal(gamma);
+		// correct weights
+		in.weights[i] += accretion[i];
 	}
 }

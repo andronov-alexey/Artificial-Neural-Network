@@ -26,7 +26,7 @@ QSMatrix<T>& QSMatrix<T>::operator=(QSMatrix<T>&& other) {
 // Copy Constructor
 template <typename T>
 QSMatrix<T>::QSMatrix(const QSMatrix<T>& other) {
-	mat = rhs.mat;
+	mat = other.mat;
 }
 
 // Assignment Operator
@@ -70,10 +70,12 @@ QSMatrix<T> QSMatrix<T>::operator+(const QSMatrix<T>& other) {
 
 // Cumulative addition of this matrix and another
 template <typename T>
-QSMatrix<T>& QSMatrix<T>::operator+=(const QSMatrix<T>& other) {
+QSMatrix<T> & QSMatrix<T>::operator+=(const QSMatrix<T>& other) {
 	const auto rows = other.row_count();
 	const auto cols = other.col_count();
-	
+	assert(this->row_count() <= rows);
+	assert(this->col_count() <= cols);
+
 	for (size_t i = 0; i < rows; i++) {
 		for (size_t j = 0; j < cols; j++) {
 			this->mat[i][j] += other(i,j); 
@@ -164,8 +166,8 @@ std::vector<T>& operator*=(std::vector<T>& lhs, const QSMatrix<T>& rhs) {
 // matrix * vector
 template <typename T>
 std::vector<T> QSMatrix<T>::operator*(const std::vector<T>& other) {
-	const auto rows = row_count();
-	const auto cols = col_count();
+	const size_t rows = row_count();
+	const size_t cols = col_count();
 	std::vector<T> result(rows);
 	for (size_t i = 0; i < rows; i++) {
 		for (size_t j = 0; j < cols; j++) {
@@ -173,6 +175,20 @@ std::vector<T> QSMatrix<T>::operator*(const std::vector<T>& other) {
 		}
 	}
 	return result;
+}
+
+template <typename T>
+void MatrixMult(QSMatrix<T> & m, const std::vector<T> & lhs, const std::vector<T> & rhs) {
+	const size_t rows = lhs.size();
+	const size_t cols = rhs.size();
+	assert(m.row_count() == rows);
+	assert(m.col_count() == cols);
+
+	for (size_t i = 0; i < rows; i++) {
+		for (size_t j = 0; j < cols; j++) {
+			m(i, j) = lhs[i] * rhs[j];
+		}
+	}
 }
 
 template <typename Cont>
@@ -242,10 +258,9 @@ QSMatrix<T> QSMatrix<T>::operator*(const T& val) {
 	return result;
 }
 
-// matrix * scalar value
-// [duplicate of "QSMatrix<T> QSMatrix<T>::operator*(const T& val)"]
+// matrix * scalar value [in place]
 template <typename T>
-QSMatrix<T>& QSMatrix<T>::multscal(const T& val) {
+QSMatrix<T> & QSMatrix<T>::multscal(const T& val) {
 	for(auto it = begin(mat); it != end(mat); ++it)	{
 		std::transform(begin(*it), end(*it), begin(*it), 
 			std::bind1st(std::multiplies<T>(), val));

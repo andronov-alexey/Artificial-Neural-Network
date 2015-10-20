@@ -53,9 +53,12 @@ public:
 
 // external interfaces
 template <typename T>
-std::vector<T> operator*(const std::vector<T>& lhs, const QSMatrix<T>& rhs);
+std::vector<T> operator*(const std::vector<T> & lhs, const QSMatrix<T> & rhs);
 template <typename T>
-std::vector<T>& operator*=(std::vector<T>& lhs, const QSMatrix<T>& rhs);
+std::vector<T> & operator*=(std::vector<T> & lhs, const QSMatrix<T> & rhs);
+// vec[2] * vec[3] = mat [2x3]
+template <typename T>
+void MatrixMult(/*[out]*/ QSMatrix<T> & m, /*[in]*/ const std::vector<T> & lhs, /*[in]*/ const std::vector<T> & rhs);
 
 
 
