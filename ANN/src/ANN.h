@@ -5,20 +5,36 @@
 #include <functional>
 #include <iterator>
 
-using namespace std;
-
 // type of activation function
 #define classifier // poor choice
+
+struct UNARY {
+	enum {
+		Fh = 0, // activation function for hidden layer
+		dFh,    // derivative of the activation function for hidden layer
+		Fo,     // activation function for output layer
+		dFo,    // derivative of the activation function for output layer
+		SIZE
+	};
+};
+
+struct BINARY {
+	enum {
+		Fe = 0, // activation function for error layer
+		dFe,    // derivative of the activation function for error layer
+		SIZE
+	};
+};
 
 class ANN
 {
 	// precision
 	typedef double elem_t;
-	typedef vector<elem_t> layer_t;
+	typedef std::vector<elem_t> layer_t;
 	// rectangular matrix
-	typedef vector<layer_t> matrix_t;
-	typedef function<elem_t(elem_t&)> func_t;
-	typedef function<elem_t(elem_t&, elem_t&)> func2_t;
+	typedef std::vector<layer_t> matrix_t;
+	typedef std::function<elem_t(elem_t&)> func_t;
+	typedef std::function<elem_t(elem_t&, elem_t&)> func2_t;
 	
 public:
 	ANN();
@@ -42,30 +58,15 @@ private:
 	// learning rate
 	elem_t gamma;
 	elem_t maxError;
+
 	// indices
 	size_t lastLayerIndex;
 	size_t errorLayerIndex;
 
-
 	// quadratic errors of the network for every iteration
-	vector<elem_t> errors;
-
-	// applicable activation function
-	func_t F;
-	// derivative of the activation function
-	func_t dF;
-	// activation function for hidden layer
-	func_t Fh;
-	// derivative of the activation function for hidden layer
-	func_t dFh;
-	// activation function for output layer
-	func_t Fo;
-	// derivative of the activation function for output layer
-	func_t dFo;
-	// activation function for error layer
-	func2_t Fe;
-	// derivative of the activation function for error layer
-	func2_t dFe;
+	std::vector<elem_t> errors;
+	std::vector<func_t> u_functions;
+	std::vector<func2_t> b_functions;
 };
 
 #endif
