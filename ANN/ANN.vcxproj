@@ -85,6 +85,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ANN.h" />
+    <ClInclude Include="src\Functions.h" />
     <ClInclude Include="src\InputStruct.h" />
     <ClInclude Include="src\matrix.h" />
   </ItemGroup>

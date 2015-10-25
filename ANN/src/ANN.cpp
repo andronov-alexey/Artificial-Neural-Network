@@ -2,32 +2,11 @@
 
 using namespace std;
 
-//1) In case of classifier:
-//hidden layer = output layer:
-//	s(z) = (1 + e^-z)^-1 
-//2) In case of regression:
-//hidden layer:
-//	s(z) = (1 + e^-z)^-1 
-//output layer:
-//In case of regression:
-//hidden layer:
-//	s(z) = (1 + e^-z)^-1 
-//output layer:
-//	r(z) = z //linear
-
-template <typename T> T 
-sigmoid(const T& val) {
-		return 1.0 / (1.0 + exp(-val));
-}
-
-template <typename T> T 
-linear(const T& val) {
-	return val;
-}
+using func::BINARY;
+using func::UNARY;
 
 ANN::ANN() {
 	in.ReadInput();
-	InitFunctions();
 	InitSizes();
 
 	maxError = 1e-5;
@@ -41,23 +20,6 @@ void ANN::Start() {
 		BackPropagation();
 		FeedForward();
 	}
-}
-
-void ANN::InitFunctions() {
-	u_functions.resize(UNARY::SIZE);
-	b_functions.resize(BINARY::SIZE);
-
-	u_functions[UNARY::Fh]  = [](const elem_t& el) { return sigmoid(el);  };
-	u_functions[UNARY::dFh] = [](const elem_t& el) { return el*(1. - el); };
-	b_functions[BINARY::Fe]  = [](const elem_t& o, const elem_t& d) { return 0.5*(o - d)*(o - d); };
-	b_functions[BINARY::dFe] = [](const elem_t& o, const elem_t& d) { return (o - d); };
-#ifdef classifier
-	u_functions[UNARY::Fo]  = u_functions[UNARY::Fh];
-	u_functions[UNARY::dFo] = u_functions[UNARY::dFh];
-#else // regression
-	u_functions[UNARY::Fo]  = [](const elem_t& el) { return linear(el); };
-	u_functions[UNARY::dFo] = [](const elem_t& el) { return 0; };
-#endif
 }
 
 void ANN::InitSizes() {
@@ -98,9 +60,9 @@ void ANN::InitSizes() {
 void ANN::FeedForward() {
 	const auto s = o.size();
 	// applicable activation function
-	auto F  = GetFunctionIter(UNARY::Fh);
+	auto F  = functions.GetFunction(UNARY::Fh);
 	// derivative of the activation function
-	auto dF = GetFunctionIter(UNARY::dFh);
+	auto dF = functions.GetFunction(UNARY::dFh);
 
 	for (size_t i = 0; i < lastLayerIndex; i++) {
 		layer_t& Oj = o[i + 1];
@@ -109,23 +71,23 @@ void ANN::FeedForward() {
 		SubFill(Oj, o[i] * in.weights[i]);
 		// last layer - special case
 		if (i == lastLayerIndex - 1) {
-			F  = GetFunctionIter(UNARY::Fo);
-			dF = GetFunctionIter(UNARY::dFo);
+			F  = functions.GetFunction(UNARY::Fo);
+			dF = functions.GetFunction(UNARY::dFo);
 		}
 
 		auto arg = Oj;
 		auto endIt = (i != lastLayerIndex - 1) ? prev(end(arg)) : end(arg);
 		// apply function to the layer (aka s(Net(j)))
-		transform(begin(arg), endIt, begin(Oj), *F);
+		transform(begin(arg), endIt, begin(Oj), F);
 		// calculate derivatives (aka s'(Net(j)))
-		transform(begin(arg), endIt, begin(dOj), *dF);
+		transform(begin(arg), endIt, begin(dOj), dF);
 	}
 	// process error level
 	layer_t& Olast = o[lastLayerIndex];
 	layer_t& Oe =    o[errorLayerIndex];
 	layer_t& dOe = d_o[errorLayerIndex];
-	transform(begin(Olast), end(Olast), begin(in.desired_output), begin(Oe),  *GetFunctionIter(BINARY::Fe));
-	transform(begin(Olast), end(Olast), begin(in.desired_output), begin(dOe), *GetFunctionIter(BINARY::dFe));
+	transform(begin(Olast), end(Olast), begin(in.desired_output), begin(Oe),  functions.GetFunction(BINARY::Fe));
+	transform(begin(Olast), end(Olast), begin(in.desired_output), begin(dOe), functions.GetFunction(BINARY::dFe));
 
 	CalculateError();
 }
