@@ -1,6 +1,7 @@
 #include "ANN.h"
 
 //TODO:
+// GetFunction(UNARY::Fo);
 // + utest
 // + training sets
 // + switch between activation functions
@@ -11,15 +12,7 @@
 int main ( int argc, char **argv)
 {
 	ANN ann;
-	ann.FeedForward();
-	//if (maxError >= errors[iteration])
-	//	return;
-	
-	ann.BackPropagation();
-	// ++iteration;
-	volatile int itr = 5;
-	itr++;
-	//Output_results();
+	ann.Start();
 }
 
 

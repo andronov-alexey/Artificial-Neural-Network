@@ -25,7 +25,7 @@ linear(const T& val) {
 	return val;
 }
 
-ANN::ANN() : iteration(0) {
+ANN::ANN() {
 	in.ReadInput();
 	InitFunctions();
 	InitSizes();
@@ -34,8 +34,17 @@ ANN::ANN() : iteration(0) {
 	gamma = 10;
 }
 
-void ANN::InitFunctions()
-{
+void ANN::Start() {
+	iteration = 0;
+	FeedForward();
+	for( ; errors[iteration] > maxError; ++iteration) {
+		BackPropagation();
+		FeedForward();
+	}
+}
+
+
+void ANN::InitFunctions() {
 	u_functions.resize(UNARY::SIZE);
 	b_functions.resize(BINARY::SIZE);
 
@@ -52,8 +61,7 @@ void ANN::InitFunctions()
 #endif
 }
 
-void ANN::InitSizes()
-{
+void ANN::InitSizes() {
 	const auto s = in.weights.size();
 	o.resize(s + 2); // +1 = error level, +1 = input level
 	d_o.resize(s + 2);
@@ -105,12 +113,13 @@ void ANN::FeedForward() {
 			F  = begin(u_functions) + UNARY::Fo;
 			dF = begin(u_functions) + UNARY::dFo;
 		}
-		// apply function to the layer (aka s(Net(j)))
-		auto endIt = (i != lastLayerIndex - 1) ? prev(end(Oj)) : end(Oj);
 
-		transform(begin(Oj), endIt, begin(Oj), *F);
-		// calculate derivatives
-		transform(begin(Oj), endIt, begin(dOj), *dF);
+		auto arg = Oj;
+		auto endIt = (i != lastLayerIndex - 1) ? prev(end(arg)) : end(arg);
+		// apply function to the layer (aka s(Net(j)))
+		transform(begin(arg), endIt, begin(Oj), *F);
+		// calculate derivatives (aka s'(Net(j)))
+		transform(begin(arg), endIt, begin(dOj), *dF);
 	}
 	// process error level
 	layer_t& Olast = o[lastLayerIndex];
@@ -128,22 +137,27 @@ void ANN::CalculateError() {
 }
 
 void ANN::BackPropagation() {
-	// backpropagated error up to the output layer
 	layer_t& dOlast = d_o[lastLayerIndex];
 	layer_t& dOe =    d_o[errorLayerIndex];
+	// backpropagated error up to the output layer
 	transform(begin(dOlast), end(dOlast), begin(dOe), begin(deltas[lastLayerIndex - 1]), multiplies<elem_t>());
 	// backpropagated error up to the hidden layer
 	for(int i = lastLayerIndex - 2; i > -1; --i) {
 		layer_t& dOprev = d_o[i + 1];
-		auto W2Delta = in.weights[i + 1] * deltas[i + 1];
-		transform(begin(dOprev), end(dOprev), begin(W2Delta), begin(deltas[i]), multiplies<elem_t>());
+		auto WDelta = in.weights[i + 1] * deltas[i + 1];
+		transform(begin(dOprev), end(dOprev), begin(WDelta), begin(deltas[i]), multiplies<elem_t>());
 	}
-	// compute augmentation matrices
+	
 	const size_t sz = deltas.size();
+	// compute augmentation matrices
 	for (size_t i = 0; i < sz; i++) {
-		//layer_t dumbO (2, 10); dumbO[1] = 100;
-		//layer_t dumbDelta (5, 1); dumbDelta[1] = 10; dumbDelta[2] = 100; dumbDelta[3] = 1000; dumbDelta[4] = 10000;
-		//MatrixMult(accretion[0], dumbDelta, dumbO);
+		//layer_t dumbDelta (2, 10); dumbDelta[1] = 100;
+		//layer_t dumbO (5, 1); dumbO[1] = 10; dumbO[2] = 100; dumbO[3] = 1000; dumbO[4] = 10000;
+		//MatrixMult(accretion[0], dumbO, dumbDelta);
+		//// apply learning coefficient
+		//accretion[i].multscal(gamma);
+		//// correct weights
+		//in.weights[i] += accretion[i];
 		MatrixMult(accretion[i], o[i], deltas[i]);
 		// apply learning coefficient
 		accretion[i].multscal(gamma);

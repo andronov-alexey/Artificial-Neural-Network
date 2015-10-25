@@ -38,6 +38,7 @@ class ANN
 	
 public:
 	ANN();
+	void Start();
 	void FeedForward();
 	void CalculateError();
 	void BackPropagation();
@@ -65,6 +66,7 @@ private:
 
 	// quadratic errors of the network for every iteration
 	std::vector<elem_t> errors;
+
 	std::vector<func_t> u_functions;
 	std::vector<func2_t> b_functions;
 };
