@@ -1,10 +1,8 @@
 #include "ANN.h"
 
 //TODO:
-// GetFunction(UNARY::Fo);
 // + utest
 // + training sets
-// + switch between activation functions
 // + steps for in.txt
 // + addr checkker
 // bug: fail if in.txt has leading spaces 

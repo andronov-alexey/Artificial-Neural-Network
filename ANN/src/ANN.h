@@ -3,10 +3,7 @@
 
 #include "InputStruct.h"
 #include "Functions.h"
-//#include <functional>
 #include <iterator>
-
-
 
 class ANN
 {
@@ -15,8 +12,6 @@ class ANN
 	typedef std::vector<elem_t> layer_t;
 	// rectangular matrix
 	typedef std::vector<layer_t> matrix_t;
-	/*typedef std::function<elem_t(elem_t&)> func_t;
-	typedef std::function<elem_t(elem_t&, elem_t&)> func2_t;*/
 	
 public:
 	ANN();
