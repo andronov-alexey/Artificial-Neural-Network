@@ -43,7 +43,6 @@ void ANN::Start() {
 	}
 }
 
-
 void ANN::InitFunctions() {
 	u_functions.resize(UNARY::SIZE);
 	b_functions.resize(BINARY::SIZE);
@@ -99,9 +98,9 @@ void ANN::InitSizes() {
 void ANN::FeedForward() {
 	const auto s = o.size();
 	// applicable activation function
-	vector<func_t>::const_iterator F = begin(u_functions) + UNARY::Fh;
+	auto F  = GetFunctionIter(UNARY::Fh);
 	// derivative of the activation function
-	vector<func_t>::const_iterator dF = begin(u_functions) + UNARY::dFh;
+	auto dF = GetFunctionIter(UNARY::dFh);
 
 	for (size_t i = 0; i < lastLayerIndex; i++) {
 		layer_t& Oj = o[i + 1];
@@ -110,8 +109,8 @@ void ANN::FeedForward() {
 		SubFill(Oj, o[i] * in.weights[i]);
 		// last layer - special case
 		if (i == lastLayerIndex - 1) {
-			F  = begin(u_functions) + UNARY::Fo;
-			dF = begin(u_functions) + UNARY::dFo;
+			F  = GetFunctionIter(UNARY::Fo);
+			dF = GetFunctionIter(UNARY::dFo);
 		}
 
 		auto arg = Oj;
@@ -125,8 +124,8 @@ void ANN::FeedForward() {
 	layer_t& Olast = o[lastLayerIndex];
 	layer_t& Oe =    o[errorLayerIndex];
 	layer_t& dOe = d_o[errorLayerIndex];
-	transform(begin(Olast), end(Olast), begin(in.desired_output), begin(Oe),  b_functions[BINARY::Fe]);
-	transform(begin(Olast), end(Olast), begin(in.desired_output), begin(dOe), b_functions[BINARY::dFe]);
+	transform(begin(Olast), end(Olast), begin(in.desired_output), begin(Oe),  *GetFunctionIter(BINARY::Fe));
+	transform(begin(Olast), end(Olast), begin(in.desired_output), begin(dOe), *GetFunctionIter(BINARY::dFe));
 
 	CalculateError();
 }

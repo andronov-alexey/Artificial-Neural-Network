@@ -9,7 +9,7 @@
 #define classifier // poor choice
 
 struct UNARY {
-	enum {
+	enum FNAME{
 		Fh = 0, // activation function for hidden layer
 		dFh,    // derivative of the activation function for hidden layer
 		Fo,     // activation function for output layer
@@ -19,7 +19,7 @@ struct UNARY {
 };
 
 struct BINARY {
-	enum {
+	enum FNAME{
 		Fe = 0, // activation function for error layer
 		dFe,    // derivative of the activation function for error layer
 		SIZE
@@ -45,6 +45,13 @@ public:
 private:
 	void InitSizes();
 	void InitFunctions();
+	std::vector<func_t>::const_iterator 
+		GetFunctionIter(UNARY::FNAME F)
+	{ return begin(u_functions) + F; };
+
+	std::vector<func2_t>::const_iterator 
+		GetFunctionIter(BINARY::FNAME F)
+	{ return begin(b_functions) + F; };
 	InputStruct<elem_t> in;
 	// same type and dimensions as in.weights // very bad code :) 
 	std::vector<QSMatrix<elem_t>> accretion; 

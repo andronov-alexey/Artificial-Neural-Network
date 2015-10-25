@@ -1,7 +1,7 @@
 #include "ANN.h"
 
 //TODO:
-// GetFunction(UNARY::Fo);
+// GetFunctionIter(UNARY::Fo);
 // + utest
 // + training sets
 // + switch between activation functions
