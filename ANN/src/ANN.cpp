@@ -10,7 +10,7 @@ ANN::ANN() {
 	InitSizes();
 
 	maxError = 1e-5;
-	gamma = 10;
+	gamma = 0.15;
 }
 
 void ANN::Start() {

@@ -1,5 +1,6 @@
 #ifndef InputStruct_H
 #define InputStruct_H
+
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -8,10 +9,8 @@
 
 #include "matrix.h"
 
-
 template <typename T>
-class InputStruct
-{
+class InputStruct {
 	// fixed point precision
 	typedef int fix_t;
 public:
@@ -22,11 +21,10 @@ public:
 	std::vector<T> desired_output;
 private:
 	template <typename R>
-	void GetNextVal(R&);
+	void GetNextVal(R &);
 	std::ifstream file; // input file
 	std::istringstream buf; // buffer
 };
-
 
 #include "InputStruct.tpp"
 #endif

@@ -1,9 +1,10 @@
 #ifndef ANN_H
 #define ANN_H
 
+#include <iterator>
+
 #include "InputStruct.h"
 #include "Functions.h"
-#include <iterator>
 
 class ANN
 {

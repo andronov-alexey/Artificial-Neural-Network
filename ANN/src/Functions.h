@@ -2,7 +2,6 @@
 #define Functions_H
 
 #include <functional>
-#include <vector>
 
 namespace func {
 
@@ -41,12 +40,12 @@ struct BINARY {
 //	r(z) = z //linear
 
 template <typename T> T 
-	sigmoid(const T & val) {
+sigmoid(const T & val) {
 		return 1.0 / (1.0 + exp(-val));
 }
 
 template <typename T> T 
-	linear(const T & val) {
+linear(const T & val) {
 		return val;
 }
 
@@ -62,15 +61,12 @@ public:
 	func2_t GetFunction(BINARY::FNAME F)
 	{ return b_functions[F]; };
 private:
-	std::vector<func_t> u_functions;
-	std::vector<func2_t> b_functions;
+	func_t u_functions[UNARY::SIZE];
+	func2_t b_functions[BINARY::SIZE];
 };
 
 template <typename T>
 Functions<T>::Functions() {
-	u_functions.resize(UNARY::SIZE);
-	b_functions.resize(BINARY::SIZE);
-
 	u_functions[UNARY::Fh]  = [](const T & el) { return sigmoid(el);  };
 	u_functions[UNARY::dFh] = [](const T & el) { return el * (1. - el); };
 	b_functions[BINARY::Fe]  = [](const T & o, const T & d) { return 0.5 * (o - d) * (o - d); };
@@ -79,8 +75,8 @@ Functions<T>::Functions() {
 	u_functions[UNARY::Fo]  = u_functions[UNARY::Fh];
 	u_functions[UNARY::dFo] = u_functions[UNARY::dFh];
 #else // regression
-	u_functions[UNARY::Fo]  = [](const elem_t& el) { return linear(el); };
-	u_functions[UNARY::dFo] = [](const elem_t& el) { return 0; };
+	u_functions[UNARY::Fo]  = [](const T & el) { return linear(el); };
+	u_functions[UNARY::dFo] = [](const T & el) { return 0; };
 #endif
 };
 

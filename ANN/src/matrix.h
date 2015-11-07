@@ -7,8 +7,6 @@
 #include <algorithm>
 #include <assert.h> 
 
-// + swap?
-
 template <typename T> 
 class QSMatrix {
 private:
